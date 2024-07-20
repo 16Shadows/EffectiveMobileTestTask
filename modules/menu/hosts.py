@@ -15,6 +15,7 @@ class SimpleConsoleMenuHost(MenuHostBase):
             currentMenuEntries : list[MenuEntryBase] = currentMenu.entries
 
             while True:
+                print()
                 print(currentMenu.text)
                 for i in range(0, len(currentMenuEntries)):
                     print(i+1, ". ", currentMenuEntries[i].text)
