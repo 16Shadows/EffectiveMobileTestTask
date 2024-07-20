@@ -1,9 +1,10 @@
 from typing import Callable
 
-def input_validated[T](prompt: str, convert: Callable[[str], T], validate: Callable[[T], bool], errorMessage: str) -> T:
+def input_validated[T](prompt: str, convert: Callable[[str], T], validate: Callable[[T], bool], errorMessage: str) -> T | None:
     '''Запрашивает у пользователя ввод, пока пользователь не введёт значение,
     успешно преобразуемое функцией convert и валидируемое функцией validate
-    
+    Возвращает результат преобразования (вызова convert) или None, если было поднято исключение KeyboardInterrupt
+
     Аргументы:
     prompt : str -- Отображаемое при запросе ввода сообщение
     convert : Callable[[str], T] -- функция-конвертер для преобразования входной строки к желаемому типу. Может поднимать исключение ValueError.
@@ -19,6 +20,8 @@ def input_validated[T](prompt: str, convert: Callable[[str], T], validate: Calla
             return result
         except ValueError:
             print(errorMessage)
+        except KeyboardInterrupt:
+            return None
 
 def converter_string(x : str) -> str:
     '''Функция-конвертер для input_validated, убирающая whitespace-символы из начала и конца строки'''
