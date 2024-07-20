@@ -38,3 +38,13 @@ def validator_string_not_empty(x : str) -> bool:
 def validator_always(_ : object) -> bool:
     '''Функция-валидатор для input_validate, принимающая любое значение как валидное'''
     return True
+
+def validator_int_range(value: int, min: int | None = None, max: int | None = None) -> bool:
+    '''Функция-валидатор для input_validate, проверяющая, находится ли число в диапазоне (включительно)
+    
+    Аргументы:
+    value : int - значение для проверки
+    min : int | None - нижняя граница. Если None, то нижней границы нет.
+    max : int | None - верхняя граница. Если None, то верхней границы нет.
+    '''
+    return (min is None or min <= value) and (max is None or value <= max)
