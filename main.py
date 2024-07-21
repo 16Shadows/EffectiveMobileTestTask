@@ -27,6 +27,7 @@ class LibraryManagerRootMenu(MenuBase):
         self._entries : list[MenuEntryBase] = [
             StaticMenuEntry('Добавить книгу', self.__add_book),
             StaticMenuEntry('Удалить книгу по ID', self.__remove_book_by_id),
+            StaticMenuEntry('Изменить статус книги по ID', self.__change_book_status_by_id),
             StaticMenuEntry('Вывести все книги', lambda host: host.push(LibraryManagerBooksList(self._storage.all_books()))),
             StaticMenuEntry('Поиск по книгам', lambda host: host.push(LibraryManagerSearchMenu(self._storage))),
             StaticMenuEntry('Выход', lambda host: host.pop())
@@ -61,6 +62,15 @@ class LibraryManagerRootMenu(MenuBase):
             return
         self._storage.remove_book(self._storage.find_book_by_id(id))
 
+    def __change_book_status_by_id(self: Self, host: MenuHostBase) -> None:
+        if self._storage.books_count < 1:
+            print('Книг нет')
+            return
+        id = input_validated('Введите ID книги: ', converter_int, self._storage.has_book_with_id, 'Книги с таким ID не существует!')
+        if id is None:
+            return
+        host.push(BookStatusMenu(self._storage.find_book_by_id(id)))
+        
 class LibraryManagerBooksList(MenuBase):
     def __init__(self, books : list[Book]) -> None:
         self._books = books
@@ -192,6 +202,36 @@ class LibraryManagerSearchMenu(MenuBase):
             cond.by_year(self._year)
 
         host.push(LibraryManagerBooksList(self._storage.find_books(cond)))
+
+class BookMenuBase(MenuBase):
+    def __init__(self, book: Book) -> None:
+        self._book = book
+    
+    @MenuBase.text.getter
+    def text(self: Self) -> str:
+        return (
+            f'ID: {self._book.id}\n' +
+            f'Книга: {self._book.title}\n' +
+            f'Автор: {self._book.author}\n' +
+            f'Год издания: {self._book.year}\n' +
+            f'Статус: {book_status_to_string(self._book.status)}'
+        )
+    
+class BookStatusMenu(BookMenuBase):
+    @MenuBase.entries.getter
+    def entries(self: Self) -> list[MenuEntryBase]:
+        ent : list[MenuEntryBase] = []
+        
+        if (self._book.status == BookStatus.in_storage):
+            ent.append(StaticMenuEntry("Изменить статус на 'Выдано'", lambda _: self.__set_book_status(BookStatus.loaned)))
+        elif (self._book.status == BookStatus.loaned):
+            ent.append(StaticMenuEntry("Изменить статус на 'В наличии'", lambda _: self.__set_book_status(BookStatus.in_storage)))
+
+        ent.append(MenuEntryBack())
+        return ent
+
+    def __set_book_status(self: Self, status: BookStatus):
+        self._book.status = status
 
 host = SimpleConsoleMenuHost()
 
