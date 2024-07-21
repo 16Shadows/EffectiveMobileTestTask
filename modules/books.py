@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Self, Iterable
+from typing import Self
 from enum import Enum
 import re
 import json
@@ -93,7 +93,7 @@ class BookStorage:
     def has_book_with_id(self: Self, id: int) -> bool:
         return id in self._instances
     
-    def find_book(self: Self, condition: BookSearchCondition) -> Iterable[Book]:
+    def find_books(self: Self, condition: BookSearchCondition) -> list[Book]:
         books : list[Book] = []
         for value in self._instances.values():
             if (
