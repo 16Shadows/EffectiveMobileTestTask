@@ -66,11 +66,11 @@ class Book:
         '''
         return self._id
     
-    def serialize(self: Self) -> dict[object, object]:
+    def serialize(self: Self) -> dict[str, object]:
         '''
         Создаёт словарь, содержащий все поля этого объекта в json-сериализируемой форме.
         '''
-        o : dict[object, object] = {}
+        o : dict[str, object] = {}
         o['id'] = self.id
         o['title'] = self.title
         o['author'] = self.author
