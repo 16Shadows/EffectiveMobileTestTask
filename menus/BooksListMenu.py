@@ -55,7 +55,7 @@ class LibraryManagerBooksListMenu(MenuBase):
             #Добавить все книги текущей страницы как пункты, открывающие меню управления каждой книгой
             for i in range(self._current_page * self._pageSize, min((self._current_page + 1) * self._pageSize, len(self._books))):
                 book = self._books[i]
-                entries.append(StaticMenuEntry(f'{book.title} ({book.author}) [{book.year} г.] - {book_status_to_string(book.status)} (ID: {book.id})', lambda host: host.push(BookMenu(self._storage, book))))
+                entries.append(StaticMenuEntry(f'{book.title} ({book.author}) [{book.year} г.] - {book_status_to_string(book.status)} (ID: {book.id})', lambda host, book=book: host.push(BookMenu(self._storage, book))))
 
         #Добавить опцию перехода к предыдущему меню
         entries.append(MenuEntryBack())
