@@ -18,7 +18,7 @@ class ValidatorStringNotEmptyTestSuite(unittest.TestCase):
         self.assertFalse(validator_string_not_empty(''))
 
     def test_not_empty_string(self: Self):
-        self.assertFalse(validator_string_not_empty('     f'))
+        self.assertTrue(validator_string_not_empty('     f'))
 
 class ValidatorAlwaysTestSuite(unittest.TestCase):
     def test_validator_always(self: Self):
