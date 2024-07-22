@@ -86,4 +86,4 @@ class LibraryManagerSearchMenu(MenuBase):
         if self._year is not None:
             cond.by_year(self._year)
 
-        host.push(LibraryManagerBooksListMenu(self._storage.find_books(cond)))
+        host.push(LibraryManagerBooksListMenu(self._storage, self._storage.find_books(cond)))

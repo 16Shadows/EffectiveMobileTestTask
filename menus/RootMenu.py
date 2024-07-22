@@ -19,7 +19,7 @@ class LibraryManagerRootMenu(MenuBase):
         self._entries : list[MenuEntryBase] = [
             StaticMenuEntry('Добавить книгу', self.__add_book),
             StaticMenuEntry('Найти книгу по ID', self.__find_book_by_id),
-            StaticMenuEntry('Список книг', lambda host: host.push(LibraryManagerBooksListMenu(self._storage.all_books()))),
+            StaticMenuEntry('Список книг', lambda host: host.push(LibraryManagerBooksListMenu(self._storage, self._storage.all_books()))),
             StaticMenuEntry('Поиск по книгам', lambda host: host.push(LibraryManagerSearchMenu(self._storage))),
             StaticMenuEntry('Выход', lambda host: host.pop())
         ]

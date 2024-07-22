@@ -5,17 +5,18 @@ from typing import Self
 from modules.menu.static import StaticMenuEntry, MenuEntryBack
 from modules.menu.core import MenuBase, MenuEntryBase, MenuHostBase
 
-from modules.books import Book
+from modules.books import Book, BookStorage
 
 from modules.input import input_validated, converter_int, validator_int_range
 
 import math
 
-from menus.BookMenu import book_status_to_string
+from menus.BookMenu import book_status_to_string, BookMenu
 
 class LibraryManagerBooksListMenu(MenuBase):
-    def __init__(self, books : list[Book]) -> None:
+    def __init__(self, storage: BookStorage, books : list[Book]) -> None:
         self._books = books
+        self._storage = storage
         self.__currentPage = 0
         self._pageSize = 10
 
@@ -23,16 +24,14 @@ class LibraryManagerBooksListMenu(MenuBase):
     def text(self: Self) -> str:
         if len(self._books) < 1:
             return 'Нет книг.'
-        result : str = 'ID - Название - Автор - Год Издания - Статус\n'
-        for i in range(self._current_page * self._pageSize, min((self._current_page + 1) * self._pageSize, len(self._books))):
-            book = self._books[i]
-            result += f'{book.id} - {book.title} - {book.author} - {book.year} - {book_status_to_string(book.status)}\n'
-        result += f'Страница {self._current_page + 1}/{ self._page_count }'
-        return result
+        return f'Страница {self._current_page + 1}/{ self._page_count }'
 
     @MenuBase.entries.getter
     def entries(self: Self) -> list[MenuEntryBase]:
         entries : list[MenuEntryBase] = []
+
+        if len (self._books) > 0:
+            entries.append(StaticMenuEntry('Изменить размер страницы', self.__change_page_size))
 
         if (self._current_page + 1) * self._pageSize < len(self._books):
             entries.append(StaticMenuEntry('Следующая страница', self.__next_page))
@@ -40,8 +39,9 @@ class LibraryManagerBooksListMenu(MenuBase):
         if self._current_page > 0:
             entries.append(StaticMenuEntry('Предыдущая страница', self.__previous_page))
 
-        if len (self._books) > 0:
-            entries.append(StaticMenuEntry('Изменить размер страницы', self.__change_page_size))
+        for i in range(self._current_page * self._pageSize, min((self._current_page + 1) * self._pageSize, len(self._books))):
+            book = self._books[i]
+            entries.append(StaticMenuEntry(f'{book.title} ({book.author}) [{book.year} г.] - {book_status_to_string(book.status)} (ID: {book.id})', lambda host: host.push(BookMenu(self._storage, book))))
 
         entries.append(MenuEntryBack())
 
