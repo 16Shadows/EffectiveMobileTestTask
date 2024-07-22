@@ -8,6 +8,7 @@ from modules.menu.core import MenuBase, MenuEntryBase, MenuHostBase
 from modules.books import Book, BookStorage
 
 from modules.menu.input import converter_int, validator_int_range
+from modules.events import WeakSubscriber
 
 import math
 
@@ -26,6 +27,8 @@ class LibraryManagerBooksListMenu(MenuBase):
         self._storage = storage
         self.__currentPage = 0
         self._pageSize = 10
+
+        storage.book_deleted_event += WeakSubscriber(self.__on_book_deleted)
 
     @MenuBase.text.getter
     def text(self: Self) -> str:
@@ -58,6 +61,13 @@ class LibraryManagerBooksListMenu(MenuBase):
         entries.append(MenuEntryBack())
 
         return entries
+
+    def __on_book_deleted(self: Self, book: Book) -> None:
+        try:
+            self._books.remove(book)
+        except:
+            #ничего не делать, книги просто не было
+            pass
 
     def __previous_page(self: Self, _: MenuHostBase) -> None:
         '''Перейти на предыдущую страницу, если не на первой странице.'''

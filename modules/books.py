@@ -6,6 +6,8 @@ import re
 import json
 import abc
 
+from modules.events import Event
+
 class BookStatus(Enum):
     in_storage = 0
     '''Книга в наличии'''
@@ -117,6 +119,8 @@ class BookStorage:
         self._nextId = 0
         self._instances : dict[int, Book] = {}
 
+        self.book_deleted_event = Event[Book]()
+
     def new_book(self: Self, title : str, author : str, year : int) -> Book:
         '''
         Создать новую книгу с заданными параметрами.
@@ -142,6 +146,8 @@ class BookStorage:
         KeyError -- если указанной книги не существует в хранилище.
         '''
         del self._instances[book.id]
+        #если не было исключения, то книгу удалили, можно поднять событие
+        self.book_deleted_event(book)
     
     @property
     def books_count(self: Self) -> int:
