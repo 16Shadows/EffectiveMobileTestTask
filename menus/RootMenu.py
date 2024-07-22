@@ -11,16 +11,15 @@ from modules.input import input_validated, converter_string, converter_int, vali
 
 from menus.BooksListMenu import LibraryManagerBooksListMenu
 from menus.SearchMenu import LibraryManagerSearchMenu
-from menus.BookMenu import BookStatusMenu
+from menus.BookMenu import BookMenu
 
 class LibraryManagerRootMenu(MenuBase):
     def __init__(self, storage: BookStorage) -> None:
         self._storage = storage
         self._entries : list[MenuEntryBase] = [
             StaticMenuEntry('Добавить книгу', self.__add_book),
-            StaticMenuEntry('Удалить книгу по ID', self.__remove_book_by_id),
-            StaticMenuEntry('Изменить статус книги по ID', self.__change_book_status_by_id),
-            StaticMenuEntry('Вывести все книги', lambda host: host.push(LibraryManagerBooksListMenu(self._storage.all_books()))),
+            StaticMenuEntry('Найти книгу по ID', self.__find_book_by_id),
+            StaticMenuEntry('Список книг', lambda host: host.push(LibraryManagerBooksListMenu(self._storage.all_books()))),
             StaticMenuEntry('Поиск по книгам', lambda host: host.push(LibraryManagerSearchMenu(self._storage))),
             StaticMenuEntry('Выход', lambda host: host.pop())
         ]
@@ -45,20 +44,11 @@ class LibraryManagerRootMenu(MenuBase):
             return
         self._storage.new_book(title, author, year)
 
-    def __remove_book_by_id(self: Self, _: MenuHostBase) -> None:
+    def __find_book_by_id(self: Self, host: MenuHostBase) -> None:
         if self._storage.books_count < 1:
             print('Книг нет')
             return
         id = input_validated('Введите ID книги: ', converter_int, self._storage.has_book_with_id, 'Книги с таким ID не существует!')
         if id is None:
             return
-        self._storage.remove_book(self._storage.find_book_by_id(id))
-
-    def __change_book_status_by_id(self: Self, host: MenuHostBase) -> None:
-        if self._storage.books_count < 1:
-            print('Книг нет')
-            return
-        id = input_validated('Введите ID книги: ', converter_int, self._storage.has_book_with_id, 'Книги с таким ID не существует!')
-        if id is None:
-            return
-        host.push(BookStatusMenu(self._storage.find_book_by_id(id)))
+        host.push(BookMenu(self._storage, self._storage.find_book_by_id(id)))
