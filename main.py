@@ -18,7 +18,14 @@ except Exception:
     print('Не удалось загрузить БД с диска, создаём новую БД.')
     storage = BookStorage(db_path)
 
+def on_exit(*args: object)-> None:
+    storage.save_to_disk()
+
+import signal
+signal.signal(signal.SIGTERM, on_exit)
+signal.signal(signal.SIGABRT, on_exit)
+
 try:
     host.run(LibraryManagerRootMenu(storage))
 finally:
-    storage.save_to_disk()
+    on_exit()

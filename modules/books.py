@@ -73,12 +73,10 @@ class BookStorage:
         book = Book(self._nextId, title, author, year)
         self._nextId += 1
         self._instances[book.id] = book
-        self.save_to_disk()
         return book
     
     def remove_book(self: Self, book: Book) -> None:
         del self._instances[book.id]
-        self.save_to_disk()
     
     @property
     def books_count(self: Self) -> int:
