@@ -20,11 +20,12 @@ class SimpleConsoleMenuHost(MenuHostBase):
                 for i in range(0, len(currentMenuEntries)):
                     print(i+1, ". ", currentMenuEntries[i].text)
                 try:
-                    option = int(input("Введите номер пункта: "))
+                    user_input = input("Введите номер пункта: ")
+                    option = int(user_input)
                     if option < 1 or option > len(currentMenuEntries):
                         raise ValueError
                 except ValueError:
-                    print(option, " - некорректный номер пункта.") # type: ignore
+                    print(user_input, " - некорректный номер пункта.") # type: ignore
                     continue
                 currentMenuEntries[option - 1].on_selected(self)
                 break
