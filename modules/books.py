@@ -4,6 +4,7 @@ from typing import Self
 from enum import Enum
 import re
 import json
+import abc
 
 class BookStatus(Enum):
     in_storage = 0
@@ -177,7 +178,7 @@ class BookStorage:
         '''
         return id in self._instances
     
-    def find_books(self: Self, condition: BookSearchCondition) -> list[Book]:
+    def find_books(self: Self, condition: BookSearchConditionBase) -> list[Book]:
         '''
         Находит все книги, удовлетворяющие указанному условию.
 
@@ -186,13 +187,7 @@ class BookStorage:
         '''
         books : list[Book] = []
         for value in self._instances.values():
-            if (
-                (condition.by_author_pattern is None or condition.by_author_pattern.match(value.author))
-                and
-                (condition.by_title_pattern is None or condition.by_title_pattern.match(value.title))
-                and
-                (condition.by_year_pattern is None or condition.by_year_pattern == value.year)
-            ):
+            if condition.matches(value):
                 books.append(value)
         return books
     
@@ -242,7 +237,15 @@ class BookStorage:
 
         return storage
     
-class BookSearchCondition:
+class BookSearchConditionBase(abc.ABC):
+    '''Базовый класс условия поиска книг'''
+
+    @abc.abstractmethod
+    def matches(self: Self, book: Book) -> bool:
+        '''Проверить, соответствует ли книга заданному условию'''
+        pass
+
+class DefaultBookSearchCondition(BookSearchConditionBase):
     '''
     Условие поиска книг
     '''
@@ -250,6 +253,15 @@ class BookSearchCondition:
         self.by_title_pattern : re.Pattern[str] | None = None
         self.by_author_pattern : re.Pattern[str] | None = None
         self.by_year_pattern : int | None = None
+
+    def matches(self: Self, book: Book) -> bool:
+        return (
+            (self.by_author_pattern is None or self.by_author_pattern.fullmatch(book.author) is not None)
+            and
+            (self.by_title_pattern is None or self.by_title_pattern.fullmatch(book.title) is not None)
+            and
+            (self.by_year_pattern is None or self.by_year_pattern == book.year)
+        )
 
     def by_title(self: Self, pattern: re.Pattern[str]) -> Self:
         '''

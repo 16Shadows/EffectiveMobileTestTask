@@ -5,7 +5,7 @@ from typing import Self
 from modules.menu.static import StaticMenuEntry, MenuEntryBack
 from modules.menu.core import MenuBase, MenuEntryBase, MenuHostBase
 
-from modules.books import BookStorage, BookSearchCondition
+from modules.books import BookStorage, DefaultBookSearchCondition
 
 from modules.menu.input import converter_string, converter_int, validator_string_not_empty, validator_always
 
@@ -92,7 +92,7 @@ class LibraryManagerSearchMenu(MenuBase):
         '''выполнить поиск'''
 
         #создаём условие и выставляем на нём параметры, генерируем регулярные выражения для поиска подстроки 
-        cond = BookSearchCondition()
+        cond = DefaultBookSearchCondition()
 
         if self._author is not None:
             cond.by_author(re.compile(f'.*{re.escape(self._author)}.*'))
