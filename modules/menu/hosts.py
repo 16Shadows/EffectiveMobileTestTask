@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Self
+from typing import Self, Callable
 from .core import MenuBase, MenuEntryBase, MenuHostBase
 
 class SimpleConsoleMenuHost(MenuHostBase):
@@ -29,3 +29,19 @@ class SimpleConsoleMenuHost(MenuHostBase):
                     continue
                 currentMenuEntries[option - 1].on_selected(self)
                 break
+
+    def message(self: Self, message: str):
+        print(message)
+
+    def input[T](self: Self, prompt: str, convert: Callable[[str], T], validate: Callable[[T], bool], errorMessage: str) -> T | None:
+        while True:
+            try:
+                user_input = input(prompt)
+                result : T = convert(user_input)
+                if not validate(result):
+                    raise ValueError
+                return result
+            except ValueError:
+                print(errorMessage)
+            except KeyboardInterrupt:
+                return None

@@ -7,7 +7,7 @@ from modules.menu.core import MenuBase, MenuEntryBase, MenuHostBase
 
 from modules.books import Book, BookStorage
 
-from modules.input import input_validated, converter_int, validator_int_range
+from modules.menu.input import converter_int, validator_int_range
 
 import math
 
@@ -80,9 +80,9 @@ class LibraryManagerBooksListMenu(MenuBase):
         self.__currentPage = min(self.__currentPage, self._page_count - 1)
         return self.__currentPage
 
-    def __change_page_size(self: Self, _:MenuHostBase) -> None:
+    def __change_page_size(self: Self, host:MenuHostBase) -> None:
         '''Изменить число книг на странице'''
-        size = input_validated('Введите желаемое число книг на странице (или нажмите Ctrl + C для отмены): ', converter_int, lambda x: validator_int_range(x, 1), 'Количество книг на странице должно быть целым числом не меньше 1!')
+        size = host.input('Введите желаемое число книг на странице (или нажмите Ctrl + C для отмены): ', converter_int, lambda x: validator_int_range(x, 1), 'Количество книг на странице должно быть целым числом не меньше 1!')
         if size is None:
             return
         self._pageSize = size

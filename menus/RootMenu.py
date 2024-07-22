@@ -7,7 +7,7 @@ from modules.menu.core import MenuBase, MenuEntryBase, MenuHostBase
 
 from modules.books import BookStorage
 
-from modules.input import input_validated, converter_string, converter_int, validator_string_not_empty, validator_always
+from modules.menu.input import converter_string, converter_int, validator_string_not_empty, validator_always
 
 from menus.BooksListMenu import LibraryManagerBooksListMenu
 from menus.SearchMenu import LibraryManagerSearchMenu
@@ -33,16 +33,16 @@ class LibraryManagerRootMenu(MenuBase):
     def entries(self: Self) -> list[MenuEntryBase]:
         return self._entries
     
-    def __add_book(self: Self, _: MenuHostBase) -> None:
+    def __add_book(self: Self, host: MenuHostBase) -> None:
         '''Добавить книгу'''
         #считать параметры книги, досрочно прерывая добавление, если был получен None
-        title = input_validated('Введите название книги (или нажмите Ctrl + C для отмены): ', converter_string, validator_string_not_empty, 'Название должно быть непустой строкой!')
+        title = host.input('Введите название книги (или нажмите Ctrl + C для отмены): ', converter_string, validator_string_not_empty, 'Название должно быть непустой строкой!')
         if title is None:
             return
-        author = input_validated('Введите автора книги (или нажмите Ctrl + C для отмены): ', converter_string, validator_string_not_empty, 'Автор должен быть непустой строкой!')
+        author = host.input('Введите автора книги (или нажмите Ctrl + C для отмены): ', converter_string, validator_string_not_empty, 'Автор должен быть непустой строкой!')
         if author is None:
             return
-        year = input_validated('Введите год издания книги (или нажмите Ctrl + C для отмены): ', converter_int, validator_always, 'Год издания должен быть целым числом!')
+        year = host.input('Введите год издания книги (или нажмите Ctrl + C для отмены): ', converter_int, validator_always, 'Год издания должен быть целым числом!')
         if year is None:
             return
         self._storage.new_book(title, author, year)
@@ -51,9 +51,9 @@ class LibraryManagerRootMenu(MenuBase):
         '''Открыть меню управления книгой по ID'''
         #считать ID книги (если книги есть), а затем открыть меню книги с этим ID
         if self._storage.books_count < 1:
-            print('Книг нет')
+            host.message('Книг нет')
             return
-        id = input_validated('Введите ID книги (или нажмите Ctrl + C для отмены): ', converter_int, self._storage.has_book_with_id, 'Книги с таким ID не существует!')
+        id = host.input('Введите ID книги (или нажмите Ctrl + C для отмены): ', converter_int, self._storage.has_book_with_id, 'Книги с таким ID не существует!')
         if id is None:
             return
         host.push(BookMenu(self._storage, self._storage.find_book_by_id(id)))

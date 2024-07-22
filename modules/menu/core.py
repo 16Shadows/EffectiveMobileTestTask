@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Self
+from typing import Self, Callable
 import abc
 
 class MenuEntryBase(abc.ABC):
@@ -57,11 +57,32 @@ class MenuHostBase(abc.ABC):
     
     @abc.abstractmethod
     def run(self: Self, enterAt: MenuBase | None = None) -> None:
-        """Начать отображение меню в текущем контексте.
+        """
+        Начать отображение меню в текущем контексте.
         Этот метод блокирующий и завершится, когда последнее меню будет закрыто.
         
         menu : Menu | None -- меню, с которого нужно начать отображение.
                               Если меню указано, то текущей стек открытых меню будет очищен.
                               Если передано значение None, то будет открыто меню на вершине стека.
         """
+        pass
+
+    @abc.abstractmethod
+    def message(self: Self, message: str) -> None:
+        '''
+        Отобразить сообщение пользователю в текщуем контексте
+        '''
+        pass
+
+    @abc.abstractmethod
+    def input[T](self: Self, prompt: str, convert: Callable[[str], T], validate: Callable[[T], bool], errorMessage: str) -> T | None:
+        '''
+        Получить ввод от пользователя в текущем контексте.
+
+        Аргументы:
+        prompt : str -- Отображаемое при запросе ввода сообщение
+        convert : Callable[[str], T] -- функция-конвертер для преобразования входной строки к желаемому типу. Может поднимать исключение ValueError.
+        validate : Callable[[T], bool] -- функция-валидатор для валидации преобразованного значения. Должна возвращать True, если значение валидно, False иначе.
+        errorMessage : str -- сообщение, которое будет выведено, если будет поднято исключение ValueError или validate вернёт False.
+        '''
         pass

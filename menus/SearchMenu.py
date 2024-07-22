@@ -7,7 +7,7 @@ from modules.menu.core import MenuBase, MenuEntryBase, MenuHostBase
 
 from modules.books import BookStorage, BookSearchCondition
 
-from modules.input import input_validated, converter_string, converter_int, validator_string_not_empty, validator_always
+from modules.menu.input import converter_string, converter_int, validator_string_not_empty, validator_always
 
 import re
 
@@ -64,25 +64,25 @@ class LibraryManagerSearchMenu(MenuBase):
 
         return entries
 
-    def _set_by_author(self: Self, _: MenuHostBase) -> None:
+    def _set_by_author(self: Self, host: MenuHostBase) -> None:
         '''выставить условие поиска по автору'''
-        self._author = input_validated('Введите частичное имя автора (или нажмите Ctrl + C для отмены): ', converter_string, validator_string_not_empty, 'Имя автора должно быть не пустой строкой!')
+        self._author = host.input('Введите частичное имя автора (или нажмите Ctrl + C для отмены): ', converter_string, validator_string_not_empty, 'Имя автора должно быть не пустой строкой!')
 
     def _clear_by_author(self: Self, _: MenuHostBase) -> None:
         '''удалить условие поиска по автору'''
         self._author = None
 
-    def _set_by_title(self: Self, _: MenuHostBase) -> None:
+    def _set_by_title(self: Self, host: MenuHostBase) -> None:
         '''выставить условие поиска по заголовку'''
-        self._title = input_validated('Введите частичное название книги (или нажмите Ctrl + C для отмены): ', converter_string, validator_string_not_empty, 'Название книги должно быть не пустой строкой!')
+        self._title = host.input('Введите частичное название книги (или нажмите Ctrl + C для отмены): ', converter_string, validator_string_not_empty, 'Название книги должно быть не пустой строкой!')
 
     def _clear_by_title(self: Self, _: MenuHostBase) -> None:
         '''удалить условие поиска по заголовку'''
         self._title = None
 
-    def _set_by_year(self: Self, _: MenuHostBase) -> None:
+    def _set_by_year(self: Self, host: MenuHostBase) -> None:
         '''выставить условие поиска по году публикации'''
-        self._year = input_validated('Введите год публикации (или нажмите Ctrl + C для отмены): ', converter_int, validator_always, 'Год публикации должен быть целым числом!')
+        self._year = host.input('Введите год публикации (или нажмите Ctrl + C для отмены): ', converter_int, validator_always, 'Год публикации должен быть целым числом!')
 
     def _clear_by_year(self: Self, _: MenuHostBase) -> None:
         '''удалить условие поиска по году публикации'''

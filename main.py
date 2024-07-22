@@ -13,9 +13,8 @@ db_path = './database.json'
 try:
     storage = BookStorage.load_from_disk(db_path)
 except Exception:
-    traceback.print_exc()
-    print()
-    print('Не удалось загрузить БД с диска, создаём новую БД.')
+    host.message(traceback.format_exc())
+    host.message('Не удалось загрузить БД с диска, создаём новую БД.')
     storage = BookStorage(db_path)
 
 def on_exit(*args: object)-> None:
