@@ -52,7 +52,6 @@ class Event[*TArgs]:
         '''
         Вызвать всех подписчиков этого события с указанными аргументами
         '''
-        print(len(self._subscribers))
         purge = False
         for sub in self._subscribers:
             sub(*args)
